@@ -1,83 +1,34 @@
-import { API_BASE } from "./config";
+const API_BASE = "http://127.0.0.1:4000/api";
 
-/* -------------------- 类型定义 -------------------- */
+/**
+ * Admin · System Overview
+ */
+export async function fetchSystemStatus() {
+  const res = await fetch(`${API_BASE}/admin/overview`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch admin overview");
+  }
+  return res.json();
+}
 
-export type SystemStatus = {
-  fwss: {
-    status: "online" | "offline";
-    nodes: number;
-    capacityTB: number;
-  };
-  curio: {
-    status: "online" | "offline";
-    queue: number;
-    lastTask: string;
-  };
-  lotus: {
-    status: "online" | "degraded" | "offline";
-    headLag: number;
-    syncing: boolean;
-  };
-  database: {
-    status: "online" | "offline";
-    type: string;
-  };
-  storage: {
-    totalFiles: number;
-    storedFiles: number;
-    totalSize: string;
-    errors: number;
-  };
-  trust: {
-    pdpEnabled: boolean;
-    lastProof: string;
-    coveredFiles: number;
-  };
-};
+/**
+ * Admin · Files
+ */
+export async function fetchAdminFiles() {
+  const res = await fetch(`${API_BASE}/admin/files`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch admin files");
+  }
+  return res.json();
+}
 
-/* -------------------- API 实现 -------------------- */
-
-export async function fetchSystemStatus(): Promise<SystemStatus> {
-  // 真实后端（已在 3001）
-  const [dealsRes, uploadsRes] = await Promise.all([
-    fetch(`${API_BASE}/deal/list`),
-    fetch(`${API_BASE}/upload/list`),
-  ]);
-
-  const deals = await dealsRes.json();
-  const uploads = await uploadsRes.json();
-
-  // ⚠️ 这里先 mock + 真实数据混合
-  return {
-    fwss: {
-      status: "online",
-      nodes: 1,
-      capacityTB: 1.8,
-    },
-    curio: {
-      status: "online",
-      queue: 0,
-      lastTask: "ok",
-    },
-    lotus: {
-      status: "degraded",
-      headLag: 12,
-      syncing: true,
-    },
-    database: {
-      status: "online",
-      type: "yugabyte",
-    },
-    storage: {
-      totalFiles: uploads.length,
-      storedFiles: uploads.length,
-      totalSize: "9.1 GB",
-      errors: 0,
-    },
-    trust: {
-      pdpEnabled: true,
-      lastProof: "09:40 UTC",
-      coveredFiles: uploads.length,
-    },
-  };
+/**
+ * Admin · Deals
+ */
+export async function fetchAdminDeals() {
+  const res = await fetch(`${API_BASE}/admin/deals`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch admin deals");
+  }
+  return res.json();
 }
